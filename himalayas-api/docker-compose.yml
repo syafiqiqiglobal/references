@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  himalayas-api-nginx:
+    image: public.ecr.aws/juwaiiqi/amazonlinux-laravel-nginx:1.0
+    container_name: himalayas-api-nginx
+    ports:
+      - "5020:80"
+    volumes:
+      - .:/var/www/php-app
+      - ~/.ssh:/root/.ssh-keys:ro
+
+  himalayas-api-php:
+    image: 468969217647.dkr.ecr.ap-southeast-1.amazonaws.com/himalayas-api-php:buildx-latest
+    container_name: himalayas-api-php
+    network_mode: service:himalayas-api-nginx
+    volumes_from: [himalayas-api-nginx:rw]
+    command: sh -c '/var/www/php-app/.docker/ssh_keys.sh && /usr/sbin/php-fpm --fpm-config /etc/php-fpm.conf'
+    volumes:
+    - /Users/{{username}}/{{directory1}}/laravel-core:/laravel-core
+
+  himalayas-api-memcached:
+    image: memcached:1.6.15
+    container_name: himalayas-api-memcached
+    network_mode: service:himalayas-api-nginx

@@ -1,0 +1,18 @@
+FROM public.ecr.aws/juwaiiqi/amazonlinux-laravel-php:buildx-latest
+
+RUN mkdir /var/log/himalayas-api \
+    && mkdir /var/log/himalayas-api/app \
+    && mkdir /var/log/himalayas-api/framework \
+    && mkdir /var/log/himalayas-api/framework/cache \
+    && mkdir /var/log/himalayas-api/framework/sessions \
+    && mkdir /var/log/himalayas-api/framework/views \
+    && mkdir /var/log/himalayas-api/logs \
+    && mkdir /var/log/himalayas-api/api-docs \
+    && chown -R nginx:nginx /var/log/himalayas-api
+
+COPY files/oauth-public.key /var/log/himalayas-api/
+COPY files/oauth-private.key /var/log/himalayas-api/
+
+ADD . /laravel-core
+
+CMD ["/usr/sbin/php-fpm", "--fpm-config", "/etc/php-fpm.conf"]
